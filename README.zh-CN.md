@@ -38,7 +38,33 @@ codex plugin marketplace add coconilu/github-project-steward
 codex plugin add github-project-steward@github-project-steward
 ```
 
-安装后新建一个 Codex 任务，让 Codex 重新发现插件内的技能。若希望让 Codex 自己执行安装，可直接使用 [docs/INSTALL_PROMPTS.md](docs/INSTALL_PROMPTS.md) 中的提示词。
+### 给 Agent 阅读的安装指令
+
+把下面整段提示词复制给 Codex 或其他能够操作终端的 Agent：
+
+```text
+请为我安装公开 Codex 插件 GitHub Project Steward：
+https://github.com/coconilu/github-project-steward
+
+请自主完成安装。只有确实需要交互式 GitHub 登录或用户明确授权时，才暂停并向我说明。
+
+1. 检查 `codex --version`、`python --version`（要求 Python 3.11+）和 `gh --version`。
+2. 执行 `gh auth status`，确认当前账号能够访问目标仓库，并拥有 `repo` 和 `project`
+   scope。若 scope 缺失，执行 `gh auth refresh -s repo -s project`。如果认证过程需要
+   浏览器或用户交互，请暂停并告诉我需要执行的准确操作。
+3. 执行 `codex plugin marketplace list --json`。
+   - 如果不存在 `github-project-steward`，执行
+     `codex plugin marketplace add coconilu/github-project-steward`。
+   - 如果已经配置，执行 `codex plugin marketplace upgrade github-project-steward`，
+     不要先删除它。
+4. 执行 `codex plugin add github-project-steward@github-project-steward`。
+5. 执行 `codex plugin list --json`，确认 `github-project-steward` 已安装且已启用。
+6. 不要手工编辑 `marketplace.json`、`config.toml` 或其他无关插件配置。验证命令成功前，
+   不要声称安装完成；若失败，请返回失败命令和脱敏后的错误信息，不要暴露 token。
+7. 安装成功后，提醒我新建一个 Codex 任务，以便加载插件内的技能。
+```
+
+安装后新建一个 Codex 任务，让 Codex 重新发现插件内的技能。更多安装方式见 [docs/INSTALL_PROMPTS.md](docs/INSTALL_PROMPTS.md)。
 
 ## 常用指令
 

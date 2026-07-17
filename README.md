@@ -38,9 +38,39 @@ codex plugin marketplace add coconilu/github-project-steward
 codex plugin add github-project-steward@github-project-steward
 ```
 
+### Agent-ready installation instruction
+
+Copy the complete prompt below to Codex or another terminal-capable agent:
+
+```text
+Install the public Codex plugin GitHub Project Steward from
+https://github.com/coconilu/github-project-steward.
+
+Work autonomously. Pause only when an interactive GitHub sign-in or explicit user
+approval is genuinely required.
+
+1. Verify `codex --version`, `python --version` (Python 3.11+), and `gh --version`.
+2. Run `gh auth status`. Confirm the active account can access the target repositories
+   and has the `repo` and `project` scopes. If either scope is missing, run
+   `gh auth refresh -s repo -s project`. If authentication becomes interactive, stop
+   and tell me the exact action I need to take.
+3. Run `codex plugin marketplace list --json`.
+   - If `github-project-steward` is absent, run
+     `codex plugin marketplace add coconilu/github-project-steward`.
+   - If it is already configured, run
+     `codex plugin marketplace upgrade github-project-steward` instead of removing it.
+4. Run `codex plugin add github-project-steward@github-project-steward`.
+5. Run `codex plugin list --json` and verify that `github-project-steward` is installed
+   and enabled.
+6. Do not edit `marketplace.json`, `config.toml`, or unrelated plugin entries by hand.
+   Do not claim success unless the verification command succeeds. On failure, report
+   the failed command and sanitized error output without exposing tokens.
+7. After success, tell me to start a new Codex task so the bundled skills are loaded.
+```
+
 Start a new Codex task after installation so the bundled skills are discovered.
 
-For an agent-executable installation request, see [docs/INSTALL_PROMPTS.md](docs/INSTALL_PROMPTS.md).
+More installation variants are available in [docs/INSTALL_PROMPTS.md](docs/INSTALL_PROMPTS.md).
 
 ## Starter requests
 
