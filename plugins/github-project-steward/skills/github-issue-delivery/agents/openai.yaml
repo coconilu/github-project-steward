@@ -1,0 +1,4 @@
+interface:
+  display_name: "GitHub Issue Delivery"
+  short_description: "Deliver issue queues with developer and reviewer agents"
+  default_prompt: "Use $github-issue-delivery to plan and deliver the open issues with developer and reviewer agents."

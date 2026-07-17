@@ -1,0 +1,4 @@
+interface:
+  display_name: "GitHub Idea to Issue"
+  short_description: "Turn ideas into scoped and managed GitHub issues"
+  default_prompt: "Use $github-idea-to-issue to turn this idea into a managed GitHub issue."

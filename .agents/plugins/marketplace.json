@@ -1,0 +1,20 @@
+{
+  "name": "github-project-steward",
+  "interface": {
+    "displayName": "GitHub Project Steward"
+  },
+  "plugins": [
+    {
+      "name": "github-project-steward",
+      "source": {
+        "source": "local",
+        "path": "./plugins/github-project-steward"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

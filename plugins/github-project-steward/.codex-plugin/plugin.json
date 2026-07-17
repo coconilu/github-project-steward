@@ -1,0 +1,37 @@
+{
+  "name": "github-project-steward",
+  "version": "0.1.0",
+  "description": "Create reusable GitHub Projects, capture ideas as issues, and deliver issue queues through an independent developer-reviewer loop.",
+  "author": {
+    "name": "BayesWang",
+    "url": "https://github.com/coconilu"
+  },
+  "homepage": "https://github.com/coconilu/github-project-steward#readme",
+  "repository": "https://github.com/coconilu/github-project-steward",
+  "license": "MIT",
+  "keywords": [
+    "github",
+    "projects",
+    "issues",
+    "pull-requests",
+    "multi-agent"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "GitHub Project Steward",
+    "shortDescription": "Project boards and issue delivery for GitHub",
+    "longDescription": "Give Codex a reusable GitHub Projects template, Markdown board dashboards, idea-to-issue capture, and a sequential developer-reviewer delivery protocol.",
+    "developerName": "BayesWang",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/coconilu/github-project-steward",
+    "defaultPrompt": [
+      "Create a GitHub Project for this repository from the reusable public template.",
+      "Show every GitHub Project as its own Markdown table.",
+      "Plan the open issues and run the developer-reviewer delivery loop."
+    ]
+  }
+}

@@ -1,0 +1,39 @@
+name: Product or workflow idea
+description: Propose a scoped improvement to the plugin, template, or delivery protocol.
+title: "[Idea] "
+labels: ["idea"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Who is affected, what happens now, and why does it matter?
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Desired outcome
+      description: Describe an observable result rather than only an implementation.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: List testable conditions, one per line.
+      placeholder: |
+        - [ ] A new repository can...
+        - [ ] The offline validator confirms...
+    validations:
+      required: true
+  - type: textarea
+    id: non_goals
+    attributes:
+      label: Non-goals
+      description: What adjacent work should stay out of this issue?
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence and context
+      description: Add repository links, logs, screenshots, or constraints.

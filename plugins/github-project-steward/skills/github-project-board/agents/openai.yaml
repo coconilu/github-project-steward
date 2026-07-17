@@ -1,0 +1,4 @@
+interface:
+  display_name: "GitHub Project Board"
+  short_description: "Create and display reusable GitHub Project boards"
+  default_prompt: "Use $github-project-board to create or display GitHub Projects for this repository."

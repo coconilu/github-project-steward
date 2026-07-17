@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "owner": "coconilu",
+    "number": 4,
+    "title": "Open Source Product & Development Template",
+    "url": "https://github.com/users/coconilu/projects/4"
+  },
+  "fields": {
+    "Status": {
+      "type": "SINGLE_SELECT",
+      "options": [
+        "Inbox",
+        "Ready",
+        "In progress",
+        "In review",
+        "Done",
+        "Not planned"
+      ]
+    },
+    "Priority": {
+      "type": "SINGLE_SELECT",
+      "options": ["P0", "P1", "P2", "P3"]
+    },
+    "Focus": {
+      "type": "SINGLE_SELECT",
+      "options": ["Now", "Next", "Later"]
+    },
+    "Size": {
+      "type": "SINGLE_SELECT",
+      "options": ["S", "M", "L"]
+    },
+    "Area": {
+      "type": "SINGLE_SELECT",
+      "options": [
+        "Product",
+        "Core",
+        "Web",
+        "API",
+        "Automation",
+        "Docs",
+        "Operations",
+        "Cross-cutting"
+      ]
+    },
+    "Outcome": {
+      "type": "TEXT"
+    },
+    "Start date": {
+      "type": "DATE"
+    },
+    "Target date": {
+      "type": "DATE"
+    }
+  },
+  "views": [
+    {
+      "name": "Board",
+      "layout": "BOARD_LAYOUT",
+      "groupBy": "Status"
+    },
+    {
+      "name": "backlog",
+      "layout": "TABLE_LAYOUT",
+      "filter": "status:Inbox,Ready",
+      "groupBy": "Priority"
+    },
+    {
+      "name": "Completed",
+      "layout": "TABLE_LAYOUT",
+      "filter": "status:Done",
+      "sort": "Closed DESC",
+      "fields": ["Outcome"]
+    },
+    {
+      "name": "Roadmap",
+      "layout": "ROADMAP_LAYOUT",
+      "filter": "-status:Inbox -status:\"Not planned\"",
+      "dateField": "Start date"
+    }
+  ]
+}

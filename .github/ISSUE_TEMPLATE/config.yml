@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: GitHub CLI documentation
+    url: https://cli.github.com/manual/
+    about: Check upstream gh commands and authentication behavior.
