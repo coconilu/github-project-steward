@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 PLUGIN = ROOT / "plugins" / "github-project-steward"
 MANIFEST = PLUGIN / ".codex-plugin" / "plugin.json"
 MARKETPLACE = ROOT / ".agents" / "plugins" / "marketplace.json"
+LIFECYCLE = ROOT / "docs" / "AGENT_PLUGIN_LIFECYCLE.md"
 SEMVER = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$")
 
 
@@ -87,6 +88,26 @@ def main() -> int:
     template = load_json(PLUGIN / "templates" / "default-project.json")
     if [view["name"] for view in template["views"]] != ["Board", "backlog", "Completed", "Roadmap"]:
         fail("template view contract changed unexpectedly")
+
+    lifecycle_text = LIFECYCLE.read_text(encoding="utf-8")
+    required_lifecycle_content = [
+        "## Install",
+        "## Update",
+        "## Uninstall",
+        "codex plugin marketplace add coconilu/github-project-steward",
+        "codex plugin marketplace upgrade github-project-steward",
+        "codex plugin add github-project-steward@github-project-steward",
+        "codex plugin remove github-project-steward@github-project-steward",
+        "codex plugin marketplace remove github-project-steward",
+    ]
+    for required in required_lifecycle_content:
+        if required not in lifecycle_text:
+            fail(f"agent lifecycle document is missing: {required}")
+
+    for readme_name in ["README.md", "README.zh-CN.md"]:
+        readme_text = (ROOT / readme_name).read_text(encoding="utf-8")
+        if "docs/AGENT_PLUGIN_LIFECYCLE.md" not in readme_text:
+            fail(f"{readme_name} does not link the agent lifecycle document")
 
     py_compile.compile(str(PLUGIN / "scripts" / "project_steward.py"), doraise=True)
     print(f"OK: {manifest['name']} {manifest['version']} with {skill_count} skills")

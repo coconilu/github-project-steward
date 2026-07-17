@@ -27,44 +27,29 @@ flowchart LR
   Review -->|通过且检查成功| Next["记录 Outcome，处理下一个 Issue"]
 ```
 
-## 安装到 Codex
+## 插件生命周期
 
-前置条件：Python 3.11+、[GitHub CLI](https://cli.github.com/)，以及已登录且拥有仓库访问权和 `project` scope 的 GitHub 账号。
+完整的 Agent 执行约定集中维护在 [docs/AGENT_PLUGIN_LIFECYCLE.md](docs/AGENT_PLUGIN_LIFECYCLE.md)。使用时只需复制对应场景的一句话。
 
-```powershell
-gh auth status
-gh auth refresh -s project -s repo
-codex plugin marketplace add coconilu/github-project-steward
-codex plugin add github-project-steward@github-project-steward
-```
-
-### 给 Agent 阅读的安装指令
-
-把下面整段提示词复制给 Codex 或其他能够操作终端的 Agent：
+### 安装
 
 ```text
-请为我安装公开 Codex 插件 GitHub Project Steward：
-https://github.com/coconilu/github-project-steward
-
-请自主完成安装。只有确实需要交互式 GitHub 登录或用户明确授权时，才暂停并向我说明。
-
-1. 检查 `codex --version`、`python --version`（要求 Python 3.11+）和 `gh --version`。
-2. 执行 `gh auth status`，确认当前账号能够访问目标仓库，并拥有 `repo` 和 `project`
-   scope。若 scope 缺失，执行 `gh auth refresh -s repo -s project`。如果认证过程需要
-   浏览器或用户交互，请暂停并告诉我需要执行的准确操作。
-3. 执行 `codex plugin marketplace list --json`。
-   - 如果不存在 `github-project-steward`，执行
-     `codex plugin marketplace add coconilu/github-project-steward`。
-   - 如果已经配置，执行 `codex plugin marketplace upgrade github-project-steward`，
-     不要先删除它。
-4. 执行 `codex plugin add github-project-steward@github-project-steward`。
-5. 执行 `codex plugin list --json`，确认 `github-project-steward` 已安装且已启用。
-6. 不要手工编辑 `marketplace.json`、`config.toml` 或其他无关插件配置。验证命令成功前，
-   不要声称安装完成；若失败，请返回失败命令和脱敏后的错误信息，不要暴露 token。
-7. 安装成功后，提醒我新建一个 Codex 任务，以便加载插件内的技能。
+阅读 https://raw.githubusercontent.com/coconilu/github-project-steward/main/docs/AGENT_PLUGIN_LIFECYCLE.md，并且只执行“Install”流程。
 ```
 
-安装后新建一个 Codex 任务，让 Codex 重新发现插件内的技能。更多安装方式见 [docs/INSTALL_PROMPTS.md](docs/INSTALL_PROMPTS.md)。
+### 更新
+
+```text
+阅读 https://raw.githubusercontent.com/coconilu/github-project-steward/main/docs/AGENT_PLUGIN_LIFECYCLE.md，并且只执行“Update”流程。
+```
+
+### 卸载
+
+```text
+阅读 https://raw.githubusercontent.com/coconilu/github-project-steward/main/docs/AGENT_PLUGIN_LIFECYCLE.md，并且只执行“Uninstall”流程。
+```
+
+完成安装、更新或卸载后，新建一个 Codex 任务，让新的插件与 Skill 状态生效。
 
 ## 常用指令
 
