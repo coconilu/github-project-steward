@@ -11,7 +11,7 @@ An installable Codex plugin that turns a GitHub repository into a managed produc
 | Capability | Result |
 | --- | --- |
 | Create a Project | Copies the [public mother Project](https://github.com/users/coconilu/projects/4), links the target repository, preserves four views, and customizes Area options |
-| List and show Projects | Renders all Projects or one Project as readable Markdown tables |
+| List and show Projects | Renders all Projects or one Project as readable Markdown tables, hiding `Status = Done` by default |
 | Capture ideas | Turns rough ideas into scoped issues with acceptance criteria and Project fields |
 | Plan issue batches | Orders issues by dependencies, Priority, Focus, value, risk, and Size |
 | Deliver issues | Assigns one developer agent and one independent reviewer agent; fixes repeat until the review gate passes |
@@ -82,6 +82,8 @@ Create a GitHub Project for this repository. Infer Area options from the real ar
 List all my GitHub Projects and show every Project as its own table.
 ```
 
+Completed items are hidden for board displays by default. Ask to “include completed work” or pass `--include-completed` when the full history is needed.
+
 ```text
 Turn this idea into an issue, add it to Project 3, and set it to P1 / Now.
 ```
@@ -119,6 +121,7 @@ The skills call a dependency-free Python CLI. It is also useful for diagnosis:
 $cli = "plugins/github-project-steward/scripts/project_steward.py"
 python $cli preflight
 python $cli dashboard --owner coconilu
+python $cli dashboard --owner coconilu --include-completed
 python $cli create-project --repo owner/repo --areas "Core,Web,API,Docs,Cross-cutting" --dry-run
 python $cli issue-inventory --repo owner/repo --json
 ```

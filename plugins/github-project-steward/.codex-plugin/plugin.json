@@ -1,6 +1,6 @@
 {
   "name": "github-project-steward",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Create reusable GitHub Projects, capture ideas as issues, and deliver issue queues through an independent developer-reviewer loop.",
   "author": {
     "name": "BayesWang",
@@ -30,7 +30,7 @@
     "websiteURL": "https://github.com/coconilu/github-project-steward",
     "defaultPrompt": [
       "Create a GitHub Project for this repository from the reusable public template.",
-      "Show every GitHub Project as its own Markdown table.",
+      "Show every GitHub Project as its own Markdown table, hiding Done items unless I ask to include them.",
       "Plan the open issues and run the developer-reviewer delivery loop."
     ]
   }

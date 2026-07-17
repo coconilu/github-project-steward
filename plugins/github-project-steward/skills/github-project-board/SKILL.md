@@ -1,6 +1,6 @@
 ---
 name: github-project-board
-description: Create, copy, link, list, inspect, and render GitHub Projects for repositories. Use when a user asks to create a Project board from the reusable public template, list all Projects, show one Project, or display every Project as a separate Markdown table.
+description: Create, copy, link, list, inspect, and render GitHub Projects for repositories. Use when a user asks to create a Project board from the reusable public template, list all Projects, show one Project, display every Project as a separate Markdown table, or include completed work in a board display.
 ---
 
 # GitHub Project Board
@@ -22,9 +22,11 @@ Require `gh`, an authenticated GitHub account, `project` scope, and repository a
 - List project metadata: run `list-projects --owner <login>`.
 - Show one project: run `show-project --owner <login> --number <n>`.
 - Show every project as its own table: run `dashboard --owner <login>`.
+- Keep the display default for ordinary board requests: omit `--include-completed` so items with `Status = Done` stay hidden.
+- Add `--include-completed` only when the user explicitly asks to include or inspect completed work.
 - Create a repository board: inspect the repository first, choose useful Area options, run `create-project --dry-run`, then run it without `--dry-run` when the request already authorizes creation.
 
-Prefer `--json` when another reasoning step must consume the result. Return Markdown output directly for human-facing board requests.
+The default filter applies to both Markdown and JSON. `Not planned` remains visible because it is not completed work. Prefer `--json` when another reasoning step must consume the result. Return Markdown output directly for human-facing board requests.
 
 ## Create a board
 

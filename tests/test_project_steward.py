@@ -51,6 +51,42 @@ class ProjectStewardTests(unittest.TestCase):
         ordered = [item["title"] for item in sorted(items, key=steward.item_sort_key)]
         self.assertEqual(ordered, ["Active", "Now", "Later"])
 
+    def test_project_items_hide_done_by_default_and_can_include_them(self):
+        items = [
+            {"title": "Active", "status": "In progress"},
+            {"title": "Complete", "status": "Done"},
+            {"title": "Complete lowercase", "status": " done "},
+            {"title": "Declined", "status": "Not planned"},
+        ]
+
+        visible, hidden = steward.filter_project_items(items)
+        self.assertEqual([item["title"] for item in visible], ["Active", "Declined"])
+        self.assertEqual(hidden, 2)
+
+        all_items, hidden = steward.filter_project_items(items, include_completed=True)
+        self.assertEqual(all_items, items)
+        self.assertEqual(hidden, 0)
+
+    def test_empty_active_board_explains_hidden_completed_items(self):
+        rendered = steward.render_project_board(
+            {"title": "Example", "url": "https://example.test/project"},
+            [],
+            [{"name": "Board"}],
+            completed_hidden=2,
+        )
+        self.assertIn("Done hidden: 2", rendered)
+        self.assertIn("No active items", rendered)
+        self.assertIn("--include-completed", rendered)
+
+    def test_board_parser_excludes_completed_by_default(self):
+        parser = steward.build_parser()
+        default_args = parser.parse_args(["show-project", "--number", "1"])
+        included_args = parser.parse_args(
+            ["dashboard", "--owner", "octo", "--include-completed"]
+        )
+        self.assertFalse(default_args.include_completed)
+        self.assertTrue(included_args.include_completed)
+
     def test_project_readme_binds_the_repository(self):
         repo = steward.RepoInfo(
             name_with_owner="octo/example",

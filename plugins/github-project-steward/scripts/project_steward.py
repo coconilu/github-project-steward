@@ -321,6 +321,19 @@ def item_sort_key(item: Mapping[str, Any]) -> tuple[Any, ...]:
     )
 
 
+def is_completed_item(item: Mapping[str, Any]) -> bool:
+    return str(item_value(item, "Status")).strip().casefold() == "done"
+
+
+def filter_project_items(
+    items: Sequence[Mapping[str, Any]], *, include_completed: bool = False
+) -> tuple[list[Mapping[str, Any]], int]:
+    if include_completed:
+        return list(items), 0
+    visible = [item for item in items if not is_completed_item(item)]
+    return visible, len(items) - len(visible)
+
+
 def assignees_text(item: Mapping[str, Any]) -> str:
     values = item.get("assignees") or item_content(item).get("assignees") or []
     if isinstance(values, str):
@@ -361,12 +374,16 @@ def render_project_board(
     metadata: Mapping[str, Any],
     items: Sequence[Mapping[str, Any]],
     views: Sequence[Mapping[str, Any]],
+    *,
+    completed_hidden: int = 0,
 ) -> str:
     title = str(metadata.get("title") or f"Project {metadata.get('number', '')}")
     url = str(metadata.get("url") or "")
     view_names = ", ".join(str(view.get("name")) for view in views if view.get("name"))
     heading = f"## [{title}]({url})" if url else f"## {title}"
     summary = f"Views: {view_names}" if view_names else "Views: unavailable"
+    if completed_hidden:
+        summary += f" · Done hidden: {completed_hidden} (use --include-completed to show)"
     rows = []
     for item in sorted(items, key=item_sort_key):
         content = item_content(item)
@@ -386,7 +403,13 @@ def render_project_board(
                 assignees_text(item),
             ]
         )
-    if not rows:
+    if not rows and completed_hidden:
+        noun = "item" if completed_hidden == 1 else "items"
+        table = (
+            f"_No active items. {completed_hidden} completed {noun} hidden; "
+            "use --include-completed to show them._"
+        )
+    elif not rows:
         table = "_No items in this project._"
     else:
         table = markdown_table(
@@ -770,6 +793,11 @@ def build_parser() -> argparse.ArgumentParser:
     show.add_argument("--owner", default="@me")
     show.add_argument("--number", required=True, type=int)
     show.add_argument("--limit", type=int, default=200)
+    show.add_argument(
+        "--include-completed",
+        action="store_true",
+        help="Include items whose Project Status is Done; hidden by default.",
+    )
     add_common_json(show)
 
     dashboard = subparsers.add_parser(
@@ -778,6 +806,11 @@ def build_parser() -> argparse.ArgumentParser:
     dashboard.add_argument("--owner", default="@me")
     dashboard.add_argument("--project-limit", type=int, default=100)
     dashboard.add_argument("--item-limit", type=int, default=200)
+    dashboard.add_argument(
+        "--include-completed",
+        action="store_true",
+        help="Include items whose Project Status is Done; hidden by default.",
+    )
     add_common_json(dashboard)
 
     create = subparsers.add_parser("create-project", help="Copy the public template for a repository.")
@@ -852,26 +885,72 @@ def command_list_projects(args: argparse.Namespace, gh: Gh) -> None:
     emit({"owner": owner, "projects": projects}, as_json=args.json, markdown=render_projects(projects, owner))
 
 
-def board_payload(gh: Gh, owner: str, number: int, limit: int) -> dict[str, Any]:
+def board_payload(
+    gh: Gh,
+    owner: str,
+    number: int,
+    limit: int,
+    *,
+    include_completed: bool = False,
+) -> dict[str, Any]:
     resolved_owner = current_login(gh) if owner == "@me" else owner
     metadata = project_metadata(gh, resolved_owner, number)
-    items = project_items(gh, resolved_owner, number, limit)
+    fetched_items = project_items(gh, resolved_owner, number, limit)
+    items, completed_hidden = filter_project_items(
+        fetched_items, include_completed=include_completed
+    )
     views = project_views(gh, str(metadata["id"]))
-    return {"owner": resolved_owner, "project": metadata, "views": views, "items": items}
+    return {
+        "owner": resolved_owner,
+        "project": metadata,
+        "views": views,
+        "items": items,
+        "filter": {
+            "includeCompleted": include_completed,
+            "completedHidden": completed_hidden,
+            "fetchedItems": len(fetched_items),
+        },
+    }
 
 
 def command_show_project(args: argparse.Namespace, gh: Gh) -> None:
-    data = board_payload(gh, args.owner, args.number, args.limit)
-    markdown = render_project_board(data["project"], data["items"], data["views"])
+    data = board_payload(
+        gh,
+        args.owner,
+        args.number,
+        args.limit,
+        include_completed=args.include_completed,
+    )
+    markdown = render_project_board(
+        data["project"],
+        data["items"],
+        data["views"],
+        completed_hidden=data["filter"]["completedHidden"],
+    )
     emit(data, as_json=args.json, markdown=markdown)
 
 
 def command_dashboard(args: argparse.Namespace, gh: Gh) -> None:
     owner = current_login(gh) if args.owner == "@me" else args.owner
     projects = project_list(gh, owner, args.project_limit)
-    boards = [board_payload(gh, owner, int(project["number"]), args.item_limit) for project in projects]
+    boards = [
+        board_payload(
+            gh,
+            owner,
+            int(project["number"]),
+            args.item_limit,
+            include_completed=args.include_completed,
+        )
+        for project in projects
+    ]
     markdown = "\n\n".join(
-        render_project_board(board["project"], board["items"], board["views"]) for board in boards
+        render_project_board(
+            board["project"],
+            board["items"],
+            board["views"],
+            completed_hidden=board["filter"]["completedHidden"],
+        )
+        for board in boards
     )
     if not boards:
         markdown = f"## GitHub Projects — {owner}\n\n_No projects found._"
